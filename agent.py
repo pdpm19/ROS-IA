@@ -29,7 +29,7 @@ list_person = []
 list_table = []
 list_mistery = []
 list_door = []
-
+list_rooms = []
 # Origem do robot
 ogX = 0
 ogY = 0
@@ -38,56 +38,58 @@ ogY = 0
 # ASNEIRAS
 # Verifica se o objeto já foi reconhecido anteriormente
 
+# Funções de resposta às perguntas
+def q2(list_rooms):
+	global list_rooms
+	vazios = 0
+	# Verifica se há algum quarto sem pessoas
+	
+	return vazios;
+
+# Lista o objeto que encontrou (não repetido) no devido local 
 def lists(objectD, lista):
 	if objectD in lista:
 		print "Repetido"
 		return -1
 	else:
+		if localization(x, y) == 10 :
 		lista.append(objectD)
 		print lista
 		return 1
 
-# Ver se o agente está em qual corredor
-
-def corridors(x, y):
+# Ver a localização do robot
+def localization(x, y):
 	global ogX, ogY
 	# Corredor 1
 	if (x >= (ogX + 0)) and (x <= (ogX + 18.5)) and (y >= (ogY + (-1.5))) and (y <= (ogY + 0.1)):
-		print "Corredor 1"
+		return 1
 	if (x >= (ogX + 3.2)) and (x <= (ogX + 5.4)) and (y >= (ogY + 0.1)) and (y <= (ogY + 6.7)):
-		print "Corredor 2"
+		return 2
 	if (x >= (ogX + 2.8)) and (x <= (ogX + 18.5)) and (y >= (ogY + 6.7)) and (y <= (ogY + 8.8)):
-		print "Corredor 3"
+		return 3
 	if (x >= (ogX + 11.2)) and (x <= (ogX + 13.6)) and (y >= (ogY + 0.1)) and (y <= (ogY + 6.7)):
-		print "Corredor 4"
-
-
-# Ver se o agente está em algum quarto
-def rooms(x, y):
-	global ogX, ogY	
+		return 4
 	# Quarto 5
 	if (x >= (ogX + (-0.5))) and (x <= (ogX + 2.6)) and (y >= (ogY + 0.7)) and (y <= (ogY + 3.8)):
-		print "Quarto 5"
+		return 5
 	if (x >= (ogX + (-0.5))) and (x <= (ogX + 2.6)) and (y >= (ogY + 4.5)) and (y <= (ogY + 8.8)):
-		print "Quarto 6"
+		return 6
 	if (x >= (ogX + (-0.5))) and (x <= (ogX + 4.4)) and (y >= (ogY + 8.8)) and (y <= (ogY + 12.6)):
-		print "Quarto 7"
+		return 7
 	if (x >= (ogX + (4.4))) and (x <= (ogX + 8.8)) and (y >= (ogY + 9.1)) and (y <= (ogY + 12.6)):
-		print "Quarto 8"
+		return 8
 	if (x >= (ogX + (9.3))) and (x <= (ogX + 13.7)) and (y >= (ogY + 9.1)) and (y <= (ogY + 12.6)):
-		print "Quarto 9"
+		return 9
 	if (x >= (ogX + (14.2))) and (x <= (ogX + 18.5)) and (y >= (ogY + 9.1)) and (y <= (ogY + 12.6)):
-		print "Quarto 10"
+		return 10
 	if (x >= (ogX + (13.9))) and (x <= (ogX + 18.5)) and (y >= (ogY + 3.8)) and (y <= (ogY + 6.8)):
-		print "Quarto 11"
+		return 11
 	if (x >= (ogX + (13.9))) and (x <= (ogX + 18.5)) and (y >= (ogY + 0.7)) and (y <= (ogY + 3.3)):
-		print "Quarto 12"	
+		return 12	
 	if(x >= (ogX + 6.1)) and (x <= (ogX + 7.9)) and (y >= (ogY + 0.7)) and (y <= (ogY + 6.8)):
-		print "Quarto 13"
+		return 13
 	if(x >= (ogX + 8.4)) and (x <= (ogX + 10.6)) and (y >= (ogY + 0.7)) and (y <= (ogY + 6.8)):
-		print "Quarto 14"
-
-		
+		return 14
 
 # ---------------------------------------------------------------
 # odometry callback
@@ -98,14 +100,14 @@ def callback(data):
 	# show coordinates only when they change
 	if x != x_ant or y != y_ant:
 		print " x=%.1f y=%.1f" % (x,y)
-		rooms(x, y)
-		corridors(x, y)
+		localization(x, y)
 	x_ant = x
 	y_ant = y
 
 # ---------------------------------------------------------------
 # object_recognition callback
 def callback1(data):
+	global list_rooms
 	global obj_ant
 	global number_person, number_chair, number_bed, number_book, number_computer, number_table, number_mistery
 	global list_person, list_chair, list_bed, list_book, list_computer, list_table, list_mistery
@@ -149,7 +151,7 @@ def callback2(data):
 	if data.data is "1":
 		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "2":
-		print "Q%s.: %s" %(data.data, data.data)
+		print "Q%s.: %d" %(data.data, q2(list_rooms))
 	if data.data is "3":
 		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "4":
