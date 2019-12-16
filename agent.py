@@ -79,11 +79,11 @@ def localization(x, y):
 	# Quarto 5
 	if (x >= (ogX + (-0.5))) and (x <= (ogX + 2.6)) and (y >= (ogY + 0.7)) and (y <= (ogY + 3.8)):
 		return 5
-	if (x >= (ogX + (-0.5))) and (x <= (ogX + 2.6)) and (y >= (ogY + 4.5)) and (y <= (ogY + 8.8)):
+	if (x >= (ogX + (-0.5))) and (x <= (ogX + 3.2)) and (y >= (ogY + 4.5)) and (y <= (ogY + 8.8)):
 		return 6
 	if (x >= (ogX + (-0.5))) and (x <= (ogX + 4.4)) and (y >= (ogY + 8.8)) and (y <= (ogY + 12.6)):
 		return 7
-	if (x >= (ogX + (4.4))) and (x <= (ogX + 8.8)) and (y >= (ogY + 9.1)) and (y <= (ogY + 12.6)):
+	if (x >= (ogX + (4.4))) and (x <= (ogX + 8.8)) and (y >= (ogY + 8.8)) and (y <= (ogY + 12.6)):
 		return 8
 	if (x >= (ogX + (9.3))) and (x <= (ogX + 13.7)) and (y >= (ogY + 9.1)) and (y <= (ogY + 12.6)):
 		return 9
@@ -141,6 +141,13 @@ def callback(data):
 	if x != x_ant or y != y_ant:
 		print " x=%.1f y=%.1f" % (x,y)
 		localization(x,y)
+		if localization(x,y) != div_atual:
+			div_ant = div_atual
+			div_atual = localization(x,y) 
+		print div_atual
+		print div_ant
+		if div_atual in range(5,15) and div_ant in range(5,15):
+			print 'suite'
 	x_ant = x
 	y_ant = y
 
