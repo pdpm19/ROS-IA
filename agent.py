@@ -31,7 +31,7 @@ list_mistery = []
 list_door = []
 
 # Dicionário contendo todos os espaços e conteúdos dentro deles
-spaces = {"1": [],"2": [], "3": [], "4": ["corredor"], "5": [], "6": [], "7": [], "8": [], "9": [], "10": [], "11": [], "12": [], "13": [], "14": []}
+spaces = {"1": [],"2": [], "3": [], "4": [], "5": [], "6": [], "7": [], "8": [], "9": [], "10": [], "11": [], "12": [], "13": [], "14": []}
 # Origem do robot
 ogX = 0
 ogY = 0
