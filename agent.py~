@@ -29,20 +29,17 @@ list_person = []
 list_table = []
 list_mistery = []
 list_door = []
-
-# Dicionário contendo todos os espaços e conteúdos dentro deles
-spaces = {"1": [],"2": [], "3": [], "4": ["corredor"], "5": [], "6": [], "7": [], "8": [], "9": [], "10": [], "11": [], "12": [], "13": [], "14": []}
+list_rooms = []
 # Origem do robot
 ogX = 0
 ogY = 0
-x = 0
-y = 0
 
 # ---------------------------------------------------------------
 # ASNEIRAS
 # Lista o objeto que encontrou (não repetido) no devido local 
 def lists(objectD, lista):
 	if objectD in lista:
+		print "Repetido"
 		return -1
 	else:
 		lista.append(objectD)
@@ -64,11 +61,11 @@ def localization(x, y):
 	# Quarto 5
 	if (x >= (ogX + (-0.5))) and (x <= (ogX + 2.6)) and (y >= (ogY + 0.7)) and (y <= (ogY + 3.8)):
 		return 5
-	if (x >= (ogX + (-0.5))) and (x <= (ogX + 3.2)) and (y >= (ogY + 4.5)) and (y <= (ogY + 8.8)):
+	if (x >= (ogX + (-0.5))) and (x <= (ogX + 2.6)) and (y >= (ogY + 4.5)) and (y <= (ogY + 8.8)):
 		return 6
 	if (x >= (ogX + (-0.5))) and (x <= (ogX + 4.4)) and (y >= (ogY + 8.8)) and (y <= (ogY + 12.6)):
 		return 7
-	if (x >= (ogX + (4.4))) and (x <= (ogX + 8.8)) and (y >= (ogY + 8.8)) and (y <= (ogY + 12.6)):
+	if (x >= (ogX + (4.4))) and (x <= (ogX + 8.8)) and (y >= (ogY + 9.1)) and (y <= (ogY + 12.6)):
 		return 8
 	if (x >= (ogX + (9.3))) and (x <= (ogX + 13.7)) and (y >= (ogY + 9.1)) and (y <= (ogY + 12.6)):
 		return 9
@@ -83,57 +80,23 @@ def localization(x, y):
 	if(x >= (ogX + 8.4)) and (x <= (ogX + 10.6)) and (y >= (ogY + 0.7)) and (y <= (ogY + 6.8)):
 		return 14
 
-# Preenche o dicionário 
-def contents(objectD, space_number):
-	global spaces
-	for x in spaces.keys():
-		if x == str(space_number):
-			spaces[x].append(objectD)
-
-# Responde à 1
-def q1():
-	global spaces
-	rooms_n_visited = 0
-	count = 0
-	occupied = 0
-	# Vai iterar só nos quartos
-	for x in range(5, 15):
-		if len(spaces[str(x)]) != 0:
-			count += 1
-			for y in spaces[str(x)]:
-				if "person_" in y:
-					occupied += 1
-					break
-		else:
-			rooms_n_visited += 1 	
-	print "%d rooms not occupied of %d visited" %((count - occupied),(10 - rooms_n_visited))
-
 # ---------------------------------------------------------------
 # odometry callback
 def callback(data):
-	global x_ant, y_ant, ogX, ogY, x, y
+	global x_ant, y_ant, ogX, ogY
 	x = data.pose.pose.position.x+ogX
 	y = data.pose.pose.position.y+ogY	
 	# show coordinates only when they change
 	if x != x_ant or y != y_ant:
 		print " x=%.1f y=%.1f" % (x,y)
-		localization(x,y)
-		"""
-		if localization(x,y) != div_atual:
-			div_ant = div_atual
-			div_atual = localization(x,y) 
-		print div_atual
-		print div_ant
-		if div_atual in range(5,15) and div_ant in range(5,15):
-			print 'suite'
-		"""
+		print "%d" %localization(x, y)
 	x_ant = x
 	y_ant = y
 
 # ---------------------------------------------------------------
 # object_recognition callback
 def callback1(data):
-	global x, y
+	global list_rooms
 	global obj_ant
 	global number_person, number_chair, number_bed, number_book, number_computer, number_table, number_mistery
 	global list_person, list_chair, list_bed, list_book, list_computer, list_table, list_mistery
@@ -151,45 +114,37 @@ def callback1(data):
 			if "person_" in objectD:
 				if lists(objectD, list_person) == 1:			
 					number_person += 1
-					contents(objectD, localization(x, y))
 			if "chair_" in objectD:
 				if lists(objectD, list_chair) == 1:
-					number_chair += 1
-					contents(objectD, localization(x, y))		
+					number_chair += 1		
 			if "bed_" in objectD:
 				if lists(objectD, list_bed) == 1:
-					number_bed += 1
-					contents(objectD, localization(x, y))	
+					number_bed += 1	
 			if "book_" in objectD:
 				if lists(objectD, list_book) == 1:
 					number_book += 1
-					contents(objectD, localization(x, y))
 			if "computer_" in objectD:
 				if lists(objectD, list_computer) == 1:
 					number_computer += 1
-					contents(objectD, localization(x, y))
 			if "table_" in objectD:
 				if lists(objectD, list_table) == 1:
 					number_table += 1
-					contents(objectD, localization(x, y))
 			if "mistery_" in objectD:
 				if lists(objectD, list_mistery) == 1:
 					number_mistery += 1
-					contents(objectD, localization(x, y))
 	obj_ant = data.data
 		
 # ---------------------------------------------------------------
 # questions_keyboard callback
 def callback2(data):
-	global space_10, space_11, space_2
 	if data.data is "1":
-		q1()
+		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "2":
 		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "3":
 		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "4":
-		print "Q%s.: %s" %(data.data, data.data)		
+		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "5":
 		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "6":
@@ -199,7 +154,12 @@ def callback2(data):
 	if data.data is "8":
 		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "9":
-		print "O conteúdo de todos os espaços"
+		print "Q%s.: %s" %(data.data, data.data)
+	if data.data is "10":
+		print "Q%s.: %s" %(data.data, data.data)
+	if data.data is "11":
+		print "Q%s.: %s" %(data.data, data.data)
+
 
 # ---------------------------------------------------------------
 def agent():
