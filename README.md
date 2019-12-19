@@ -9,7 +9,7 @@ Porque a _VM_ não dá jeito para para transferir entre 2 PC's o ficheiro agente
 - [x] Deteção dos objetos e de multiplos objetos;
 - [x] Q1
 - [ ] Q2
-- [ ] Q3
+- [x] Q3
 - [ ] Q4
 - [ ] Q5
 - [ ] Q6

@@ -31,7 +31,7 @@ list_mistery = []
 list_door = []
 
 # Dicionário contendo todos os espaços e conteúdos dentro deles
-spaces = {"1": ["ola"],"2": ["ola", "adeus"], "3": [], "4": [], "5": [], "6": [], "7": [], "8": [], "9": [], "10": [], "11": [], "12": [], "13": [], "14": []}
+spaces = {"1": [],"2": [], "3": [], "4": [], "5": [], "6": [], "7": [], "8": [], "9": [], "10": [], "11": [], "12": [], "13": [], "14": []}
 # Origem do robot
 ogX = 0
 ogY = 0
@@ -108,6 +108,26 @@ def q1():
 			rooms_n_visited += 1 	
 	print "%d rooms not occupied of %d visited" %((count - occupied),(10 - rooms_n_visited))
 
+# Responde à 3
+def q3():
+	global spaces
+	total_persons = 0
+	rooms_persons = 0
+	corridors_persons = 0
+	for x in range(1, 15):
+		for y in spaces[str(x)]:
+			if "person_" in y:
+				total_persons += 1
+				if x < 5:
+					corridors_persons += 1
+				else:
+					rooms_persons += 1 		
+	if corridors_persons > rooms_persons:
+		print "In Corridors with: %.2f percentage" %(float(corridors_persons)/total_persons*100)
+	elif rooms_persons > corridors_persons:
+		print "In Rooms with: %.2f percentage" %(float(rooms_persons)/total_persons*100)
+	else:
+		print "It's equal, so 50/50 percentage"
 # ---------------------------------------------------------------
 # odometry callback
 def callback(data):
@@ -187,7 +207,7 @@ def callback2(data):
 	if data.data is "2":
 		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "3":
-		print "Q%s.: %s" %(data.data, data.data)
+		q3()
 	if data.data is "4":
 		print "Q%s.: %s" %(data.data, data.data)		
 	if data.data is "5":
