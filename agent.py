@@ -31,7 +31,7 @@ list_mistery = []
 list_door = []
 
 # Dicionário contendo todos os espaços e conteúdos dentro deles
-spaces = {"1": [],"2": [], "3": [], "4": [], "5": [], "6": [], "7": [], "8": [], "9": [], "10": [], "11": [], "12": [], "13": [], "14": []}
+spaces = {"1": ["ola"],"2": ["ola", "adeus"], "3": [], "4": [], "5": [], "6": [], "7": [], "8": [], "9": [], "10": [], "11": [], "12": [], "13": [], "14": []}
 # Origem do robot
 ogX = 0
 ogY = 0
@@ -181,7 +181,7 @@ def callback1(data):
 # ---------------------------------------------------------------
 # questions_keyboard callback
 def callback2(data):
-	global space_10, space_11, space_2
+	global spaces 
 	if data.data is "1":
 		q1()
 	if data.data is "2":
@@ -200,7 +200,7 @@ def callback2(data):
 		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "9":
 		print "O conteúdo de todos os espaços"
-
+		print spaces
 # ---------------------------------------------------------------
 def agent():
 	rospy.init_node('agent')
