@@ -6,6 +6,8 @@
 import rospy
 from std_msgs.msg import String
 from nav_msgs.msg import Odometry
+import networkx as nx
+import matplotlib.pyplot as plt
 
 x_ant = 0
 y_ant = 0
@@ -29,6 +31,8 @@ list_person = []
 list_table = []
 list_mistery = []
 list_door = []
+list_suits = []
+visited = []
 
 # Dicionário contendo todos os espaços e conteúdos dentro deles
 spaces = {"1": [],"2": [], "3": [], "4": [], "5": [], "6": [], "7": [], "8": [], "9": [], "10": [], "11": [], "12": [], "13": [], "14": []}
@@ -37,6 +41,13 @@ ogX = 0
 ogY = 0
 x = 0
 y = 0
+
+div_atual = 0
+div_ant = 0
+node_ant = 0
+node_atual = 0
+ver = False
+grafo = nx.Graph()
 
 # ---------------------------------------------------------------
 # ASNEIRAS
@@ -59,10 +70,10 @@ def localization(x, y):
 		return 2
 	if (x >= (ogX + 2.8)) and (x <= (ogX + 18.5)) and (y >= (ogY + 6.7)) and (y <= (ogY + 8.8)):
 		return 3
-	if (x >= (ogX + 11.2)) and (x <= (ogX + 13.6)) and (y >= (ogY + 0.1)) and (y <= (ogY + 6.7)):
+	if (x >= (ogX + 11.1)) and (x <= (ogX + 13.7)) and (y >= (ogY + 0.1)) and (y <= (ogY + 6.7)):
 		return 4
 	# Quarto 5
-	if (x >= (ogX + (-0.5))) and (x <= (ogX + 2.6)) and (y >= (ogY + 0.7)) and (y <= (ogY + 3.8)):
+	if (x >= (ogX + (-0.5))) and (x <= (ogX + 2.6)) and (y >= (ogY + 0.7)) and (y <= (ogY + 4.5)):
 		return 5
 	if (x >= (ogX + (-0.5))) and (x <= (ogX + 3.2)) and (y >= (ogY + 4.5)) and (y <= (ogY + 8.8)):
 		return 6
@@ -70,17 +81,17 @@ def localization(x, y):
 		return 7
 	if (x >= (ogX + (4.4))) and (x <= (ogX + 8.8)) and (y >= (ogY + 8.8)) and (y <= (ogY + 12.6)):
 		return 8
-	if (x >= (ogX + (9.3))) and (x <= (ogX + 13.7)) and (y >= (ogY + 9.1)) and (y <= (ogY + 12.6)):
+	if (x >= (ogX + (9.3))) and (x <= (ogX + 13.7)) and (y >= (ogY + 8.8)) and (y <= (ogY + 12.6)):
 		return 9
-	if (x >= (ogX + (14.2))) and (x <= (ogX + 18.5)) and (y >= (ogY + 9.1)) and (y <= (ogY + 12.6)):
+	if (x >= (ogX + (14.2))) and (x <= (ogX + 18.5)) and (y >= (ogY + 8.8)) and (y <= (ogY + 12.6)):
 		return 10
-	if (x >= (ogX + (13.9))) and (x <= (ogX + 18.5)) and (y >= (ogY + 3.8)) and (y <= (ogY + 6.8)):
+	if (x >= (ogX + (13.7))) and (x <= (ogX + 18.5)) and (y >= (ogY + 3.8)) and (y <= (ogY + 6.8)):
 		return 11
-	if (x >= (ogX + (13.9))) and (x <= (ogX + 18.5)) and (y >= (ogY + 0.7)) and (y <= (ogY + 3.3)):
+	if (x >= (ogX + (13.7))) and (x <= (ogX + 18.5)) and (y >= (ogY + 0.7)) and (y <= (ogY + 3.3)):
 		return 12	
-	if(x >= (ogX + 6.1)) and (x <= (ogX + 7.9)) and (y >= (ogY + 0.7)) and (y <= (ogY + 6.8)):
+	if(x >= (ogX + 5.4)) and (x <= (ogX + 7.9)) and (y >= (ogY + 0.7)) and (y <= (ogY + 6.8)):
 		return 13
-	if(x >= (ogX + 8.4)) and (x <= (ogX + 10.6)) and (y >= (ogY + 0.7)) and (y <= (ogY + 6.8)):
+	if(x >= (ogX + 8.4)) and (x <= (ogX + 11.1)) and (y >= (ogY + 0.7)) and (y <= (ogY + 6.8)):
 		return 14
 
 # Preenche o dicionário 
@@ -128,6 +139,64 @@ def q3():
 		print "In Rooms with: %.2f percentage" %(float(rooms_persons)/total_persons*100)
 	else:
 		print "It's equal, so 50/50 percentage"
+
+
+def suits(local):
+	global div_atual,div_ant, ver
+	ver = False
+	if local != div_atual:
+		div_ant = div_atual
+		div_atual = local
+		print div_ant
+		print div_atual
+	if div_atual in range(5,15) and div_ant in range(5,15):
+		suit = (div_ant,div_atual)
+		if len(list_suits) == 0:
+			list_suits.append(suit)
+			print list_suits
+		else:
+			for suits in list_suits:
+				print list_suits
+				if suit not in list_suits and (suit[0] != suits[0] or suit[0] != suits[1]) and suit[0] == suits[1]:
+					ver = False	
+				else:
+					if suit not in list_suits and (suit[0] == suits[0] or suit[0] == suits[1]) and suit[0] == suits[1]:
+						ver = False
+					else:
+						if suit not in list_suits:
+							ver = True
+
+			if ver:
+				list_suits.append(suit)
+						
+
+
+#Função conta suits
+def contsuits():
+	return len(list_suits)
+
+#Função construir grafo
+def construirGrafo(local):
+	global node_ant,node_atual, grafo, visited
+	if local != node_atual:
+		node_ant = node_atual
+		node_atual = local
+		if (node_atual,node_ant) not in grafo.edges() or (node_ant, node_atual) not in grafo.edges():
+			grafo.add_node(node_atual)
+			print 'node' + str(node_atual)
+			grafo.add_node(div_ant)
+			print 'node' + str(node_ant)
+			grafo.add_edge(node_atual,node_ant,weight = 1)
+		visited.append(node_atual)
+		visited.append(node_ant)	
+
+
+def mostrargrafo():
+	print nx.shortest_path(grafo,div_atual,0,1,method='dijkstra')
+	nx.draw(grafo,with_labels=True, font_size=8)
+	plt.show()
+		
+		
 # ---------------------------------------------------------------
 # odometry callback
 def callback(data):
@@ -138,15 +207,8 @@ def callback(data):
 	if x != x_ant or y != y_ant:
 		print " x=%.1f y=%.1f" % (x,y)
 		localization(x,y)
-		"""
-		if localization(x,y) != div_atual:
-			div_ant = div_atual
-			div_atual = localization(x,y) 
-		print div_atual
-		print div_ant
-		if div_atual in range(5,15) and div_ant in range(5,15):
-			print 'suite'
-		"""
+		suits(localization(x,y))
+		construirGrafo(localization(x,y))
 	x_ant = x
 	y_ant = y
 
@@ -206,10 +268,12 @@ def callback2(data):
 		q1()
 	if data.data is "2":
 		print "Q%s.: %s" %(data.data, data.data)
+		print "I find until now %d" %contsuits()
 	if data.data is "3":
 		q3()
 	if data.data is "4":
-		print "Q%s.: %s" %(data.data, data.data)		
+		print "Q%s.: %s" %(data.data, data.data)
+		mostrargrafo()		
 	if data.data is "5":
 		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "6":
