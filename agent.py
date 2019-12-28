@@ -195,7 +195,91 @@ def mostrargrafo():
 	print nx.shortest_path(grafo,div_atual,0,1,method='dijkstra')
 	nx.draw(grafo,with_labels=True, font_size=8)
 	plt.show()
+
+def getTypeRoom(key):
+	global spaces
+	beds = 0
+	table = 0
+	chair = 0
+	isgeneric = 1
+	if not spaces:
+		print 'I dont have enough information to answer that question'
+	else:
+		for item in spaces.get(str(key), 'none'):
 		
+			if 'bed_' in item:
+				beds += 1
+			elif 'table_' in item:
+				table += 1
+			elif 'chair_' in item:
+				chair += 1
+				
+		
+		if beds > 1:
+			print 'double_room'
+		elif beds == 1:
+			print 'single_room'
+		elif table > 1 and chair >= 1:
+			print 'meeting_room'
+		else:
+			for tuples in list_suits:
+				if key in tuples:
+					print 'suit_room'
+					isgeneric = 0
+				else:
+					isgeneric = 1				
+		
+		if isgeneric == 1:
+			print 'generic_room'				
+
+def q4():
+	global spaces
+	list_rooms = []
+	for i in range(1,15):
+		list_rooms.append(0)
+	maior = 0
+	room = 0
+	if not spaces:
+		print 'I dont have enough information to answer that question'
+	else:	
+		for x in range(1,15):
+			for y in spaces[str(x)]:
+				if "computer_" in y:
+					list_rooms[x] += 1
+		if not list_rooms:
+			print 'Dont exist any computer in the rooms that was visited'
+		else:
+			for index, val in enumerate(list_rooms):
+				if val > maior:
+					room = index
+		print room
+		print 'If you want to find a computer go to room of type '
+		getTypeRoom(room)  
+
+def q8():
+	totalTables = number_table
+	rooms = 0
+	propB = 0.0
+	propA = 0.0
+	propAsabendoB = 0.0
+
+	for x in range(1,15):
+		for y in spaces[str(x)]:
+			if 'book_' not in y and 'chair_' in y:
+				print rooms
+				rooms += 1
+	propB = float(rooms) / 15
+	if totalTables == 0:
+		propA = 0
+	else:
+		propA = 1 / float(totalTables)
+	if propB == 0:
+		propAsabedoB = 0
+	else:
+		propAsabendoB = (propA*((propB*propA)/propA))/propB
+
+	print 'The probability of finding a table in a room without books but that has at least 			one chair is: '  + str(propAsabendoB*100) + '%'
+					
 		
 # ---------------------------------------------------------------
 # odometry callback
@@ -273,15 +357,18 @@ def callback2(data):
 		q3()
 	if data.data is "4":
 		print "Q%s.: %s" %(data.data, data.data)
-		mostrargrafo()		
+		q4()
+				
 	if data.data is "5":
 		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "6":
 		print "Q%s.: %s" %(data.data, data.data)
+		mostrargrafo()
 	if data.data is "7":
 		print "Q%s.: %s" %(data.data, data.data)
 	if data.data is "8":
 		print "Q%s.: %s" %(data.data, data.data)
+		q8()
 	if data.data is "9":
 		print "O conteúdo de todos os espaços"
 		print spaces
