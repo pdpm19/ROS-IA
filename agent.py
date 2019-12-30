@@ -8,10 +8,13 @@ from std_msgs.msg import String
 from nav_msgs.msg import Odometry
 import networkx as nx
 import matplotlib.pyplot as plt
+import math
 
 x_ant = 0
 y_ant = 0
 obj_ant = ''
+init_time = 0
+distancia_percorrida = 0
 # Contador dos objetos
 number_bed = 0
 number_book = 0
@@ -298,6 +301,16 @@ def q5():
 			else:
 				print 'The nearest single room is room number ' + str(nearest_room)
 		
+def q7():
+	global init_time
+	global list_book
+	time = rospy.get_rostime().secs - init_time
+
+	if len(list_book) == 0:
+		print 'I dont have enought information...'
+	else:
+		print "I estimate to find %.2f books in the next 2 minutes" %((120*len(list_book))/time)
+
 def q8():
 	totalTables = number_table
 	rooms = 0
@@ -322,11 +335,13 @@ def q8():
 
 	print 'The probability of finding a table in a room without books but that has at least 			one chair is: '  + str(propAsabendoB*100) + '%'
 					
-		
+def q9():
+	global distancia_percorrida
+	print 'Distance: %.2f' %(distancia_percorrida)
 # ---------------------------------------------------------------
 # odometry callback
 def callback(data):
-	global x_ant, y_ant, ogX, ogY, x, y
+	global x_ant, y_ant, ogX, ogY, x, y, distancia_percorrida
 	x = data.pose.pose.position.x+ogX
 	y = data.pose.pose.position.y+ogY	
 	# show coordinates only when they change
@@ -335,6 +350,10 @@ def callback(data):
 		localization(x,y)
 		suits(localization(x,y))
 		construirGrafo(localization(x,y))
+		
+	#Calcular diferenca da distancia entre os pontos
+	#e adicionar para obter a distância percorrida
+	distancia_percorrida += math.sqrt((x-x_ant)*(x-x_ant)+(y-y_ant)*(y-y_ant))
 	x_ant = x
 	y_ant = y
 
@@ -408,17 +427,17 @@ def callback2(data):
 		print "Q%s.: %s" %(data.data, data.data)
 		mostrargrafo()
 	if data.data is "7":
-		print "Q%s.: %s" %(data.data, data.data)
+		q7()
 	if data.data is "8":
 		print "Q%s.: %s" %(data.data, data.data)
 		q8()
 	if data.data is "9":
-		print "O conteúdo de todos os espaços"
-		print spaces
+		q9()
 # ---------------------------------------------------------------
 def agent():
+	global init_time
 	rospy.init_node('agent')
-
+	init_time = rospy.get_rostime().secs
 	rospy.Subscriber("questions_keyboard", String, callback2)
 	rospy.Subscriber("object_recognition", String, callback1)
 	rospy.Subscriber("odom", Odometry, callback)
