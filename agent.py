@@ -103,10 +103,8 @@ def contents(objectD, space_number):
 			spaces[x].append(objectD)
 			attrs = {space_number:{'objects':spaces.get(str(space_number), 'none'),'type':getTypeRoom(space_number)}}
 			nx.set_node_attributes(grafo, attrs)
-			if grafo.has_node(space_number):
-				print 'conteudo'
-				print grafo.nodes[space_number]['objects']
-				print grafo.nodes[space_number]['type']
+			
+
 			
 
 # Responde à 1
@@ -286,13 +284,12 @@ def q5():
 		if not list_rooms:
 			print 'I dont visited single rooms yet'
 		else:	
-			print list_rooms
-			print div_atual
+
 			for room in list_rooms:
-				print nx.shortest_path(grafo,div_atual,room,1,method='dijkstra')
 				peso = len(nx.shortest_path(grafo,div_atual,room,1,method='dijkstra'))
 				if peso < menor:
-				 nearest_room = room
+					menor = peso
+					nearest_room = room
 			if nearest_room == 0:
 				print 'Dont exist single rooms'
 			else:
@@ -415,6 +412,8 @@ def callback2(data):
 	if data.data is "9":
 		print "O conteúdo de todos os espaços"
 		print spaces
+	if data.data is "10":
+		print 'deu'
 # ---------------------------------------------------------------
 def agent():
 	rospy.init_node('agent')
