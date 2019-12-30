@@ -156,13 +156,11 @@ def suits(local):
 	if local != div_atual:
 		div_ant = div_atual
 		div_atual = local
-		print div_ant
-		print div_atual
 	if div_atual in range(5,15) and div_ant in range(5,15):
 		suit = (div_ant,div_atual)
 		if len(list_suits) == 0:
 			list_suits.append(suit)
-			print list_suits
+			
 		else:
 			for suits in list_suits:
 				print list_suits
@@ -280,9 +278,10 @@ def q5():
 		print 'I dont visited enough rooms or i dont visited a single room yet'
 	else:
 		for x in range(1,15):
-			if grafo.has_node(x):
-				if 'single_room' == grafo.nodes[x]['type']:
-					list_rooms.append(x)
+			if grafo.has_node(x) :
+				for tuples in list_suits:
+					if 'single_room' == grafo.nodes[x]['type'] and x not in tuples:
+						list_rooms.append(x)
 
 		if not list_rooms:
 			print 'I dont visited single rooms yet'
