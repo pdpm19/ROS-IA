@@ -33,6 +33,7 @@ list_mistery = []
 list_door = []
 list_suits = []
 visited = []
+list_roomsComputer = []
 
 # Dicionário contendo todos os espaços e conteúdos dentro deles
 spaces = {"1": [],"2": [], "3": [], "4": [], "5": [], "6": [], "7": [], "8": [], "9": [], "10": [], "11": [], "12": [], "13": [], "14": []}
@@ -96,10 +97,17 @@ def localization(x, y):
 
 # Preenche o dicionário 
 def contents(objectD, space_number):
-	global spaces
+	global spaces,grafo
 	for x in spaces.keys():
 		if x == str(space_number):
 			spaces[x].append(objectD)
+			attrs = {space_number:{'objects':spaces.get(str(space_number), 'none'),'type':getTypeRoom(space_number)}}
+			nx.set_node_attributes(grafo, attrs)
+			if grafo.has_node(space_number):
+				print 'conteudo'
+				print grafo.nodes[space_number]['objects']
+				print grafo.nodes[space_number]['type']
+			
 
 # Responde à 1
 def q1():
@@ -181,33 +189,36 @@ def construirGrafo(local):
 	if local != node_atual:
 		node_ant = node_atual
 		node_atual = local
-		if (node_atual,node_ant) not in grafo.edges() or (node_ant, node_atual) not in grafo.edges():
+		if (node_atual,node_ant) not in grafo.edges() or (node_ant, node_atual) not in grafo.edges() and node_atual not in grado.nodes():
 			grafo.add_node(node_atual)
-			print 'node' + str(node_atual)
-			grafo.add_node(div_ant)
-			print 'node' + str(node_ant)
+			grafo.add_node(node_ant)
+			attrs = {node_atual:{'objects':spaces.get(str(node_atual), 'none'),'type':getTypeRoom(node_atual)}}
+			nx.set_node_attributes(grafo, attrs)
 			grafo.add_edge(node_atual,node_ant,weight = 1)
 		visited.append(node_atual)
-		visited.append(node_ant)	
-
+		visited.append(node_ant)
 
 def mostrargrafo():
 	print nx.shortest_path(grafo,div_atual,0,1,method='dijkstra')
-	nx.draw(grafo,with_labels=True, font_size=8)
-	plt.show()
+	
+
 
 def getTypeRoom(key):
 	global spaces
 	beds = 0
 	table = 0
 	chair = 0
-	isgeneric = 1
 	if not spaces:
-		print 'I dont have enough information to answer that question'
+		return 'I dont have enough information to answer that question'
+	elif key == 0:
+		return 'Elevator'
+	elif key in range(1,4):
+		return 'Hall' + str(key)
 	else:
-		for item in spaces.get(str(key), 'none'):
 		
+		for item in spaces.get(str(key), 'none'):
 			if 'bed_' in item:
+				print 'Entrou'
 				beds += 1
 			elif 'table_' in item:
 				table += 1
@@ -216,21 +227,17 @@ def getTypeRoom(key):
 				
 		
 		if beds > 1:
-			print 'double_room'
+			return 'double_room'
 		elif beds == 1:
-			print 'single_room'
+			return 'single_room'
 		elif table > 1 and chair >= 1:
-			print 'meeting_room'
+			return 'meeting_room'
+		elif table > 1 and chair >= 1 and beds > 1:
+			return 'generic_room'
 		else:
 			for tuples in list_suits:
 				if key in tuples:
-					print 'suit_room'
-					isgeneric = 0
-				else:
-					isgeneric = 1				
-		
-		if isgeneric == 1:
-			print 'generic_room'				
+					return 'suit_room'				
 
 def q4():
 	global spaces
@@ -252,10 +259,45 @@ def q4():
 			for index, val in enumerate(list_rooms):
 				if val > maior:
 					room = index
-		print room
-		print 'If you want to find a computer go to room of type '
-		getTypeRoom(room)  
+					if getTypeRoom(room) not in list_roomsComputer:
+						list_roomsComputer.append(getTypeRoom(room))
+		if room == 0:
+			print 'I dont have enough information to answer that question'
+		else:
+	 		print 'If you want to find a computer go to room of type '
+			for rooms in list_roomsComputer:
+				print rooms  
+def q5():
+	global x,y
+	list_rooms = []
+	menor = 10000000000
+	nearest_room = 0
+	peso = 0
+	div_atual = localization(x,y)
+	
+	if nx.is_empty(grafo):
+		print 'I dont visited enough rooms or i dont visited a single room yet'
+	else:
+		for x in range(1,15):
+			if grafo.has_node(x):
+				if 'single_room' == grafo.nodes[x]['type']:
+					list_rooms.append(x)
 
+		if not list_rooms:
+			print 'I dont visited single rooms yet'
+		else:	
+			print list_rooms
+			print div_atual
+			for room in list_rooms:
+				print nx.shortest_path(grafo,div_atual,room,1,method='dijkstra')
+				peso = len(nx.shortest_path(grafo,div_atual,room,1,method='dijkstra'))
+				if peso < menor:
+				 nearest_room = room
+			if nearest_room == 0:
+				print 'Dont exist single rooms'
+			else:
+				print 'The nearest single room is room number ' + str(nearest_room)
+		
 def q8():
 	totalTables = number_table
 	rooms = 0
@@ -361,6 +403,7 @@ def callback2(data):
 				
 	if data.data is "5":
 		print "Q%s.: %s" %(data.data, data.data)
+		q5()
 	if data.data is "6":
 		print "Q%s.: %s" %(data.data, data.data)
 		mostrargrafo()
