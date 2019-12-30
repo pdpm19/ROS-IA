@@ -31,7 +31,7 @@ def questions():
 	while not rospy.is_shutdown():
 		# read from keyboard
 		k=sys.stdin.read(1)
-		if int(k) < 1 or int(k) > 9:
+		if int(k) < 1 or int(k) > 15:
 			continue
 		pub.publish(k)
 		#print 'Asked question: ' , k
