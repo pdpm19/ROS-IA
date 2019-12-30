@@ -8,12 +8,12 @@ Porque a _VM_ não dá jeito para para transferir entre 2 PC's o ficheiro agente
 - [x] Deteção dos corredores;
 - [x] Deteção dos objetos e de multiplos objetos;
 - [x] Q1
-- [ ] Q2
+- [x] Q2
 - [x] Q3
-- [ ] Q4
-- [ ] Q5
+- [x] Q4
+- [x] Q5
 - [ ] Q6
-- [ ] Q7
-- [ ] Q8
-- [ ] Adição de perguntas extra;
+- [x] Q7
+- [x] Q8
+- [x] Distância percorrida;
 - [ ] Limpeza do _spaghetti code_.

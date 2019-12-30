@@ -24,7 +24,7 @@ def questions():
 	print '  6-How can you go from the current room to the elevator?'
 	print '  7-How many books do you estimate to find in the next 2 minutes?'
 	print '  8-What is the probability of finding a table in a room without books but that has at least one chair?'
-	print '  9-What is the content of every corridor and room?'
+	print '  9-Travelled distance?'
  
 	tty.setcbreak(sys.stdin)
 
