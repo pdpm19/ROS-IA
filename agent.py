@@ -148,6 +148,8 @@ def q3():
 		print "In Corridors with: %.2f percentage" %(float(corridors_persons)/total_persons*100)
 	elif rooms_persons > corridors_persons:
 		print "In Rooms with: %.2f percentage" %(float(rooms_persons)/total_persons*100)
+	elif rooms_persons == corridors_persons && rooms_persons != 0:
+		print "It's equal, 50/50 probability."
 	else:
 		print "I don't have enough information"
 
