@@ -106,8 +106,10 @@ def contents(objectD, space_number):
 			spaces[x].append(objectD)
 			attrs = {space_number:{'objects':spaces.get(str(space_number), 'none'),'type':getTypeRoom(space_number)}}
 			nx.set_node_attributes(grafo, attrs)
-			
-
+			if grafo.has_node(space_number):
+				print 'conteudo'
+				print grafo.nodes[space_number]['objects']
+				print grafo.nodes[space_number]['type']
 			
 
 # Responde à 1
@@ -147,7 +149,7 @@ def q3():
 	elif rooms_persons > corridors_persons:
 		print "In Rooms with: %.2f percentage" %(float(rooms_persons)/total_persons*100)
 	else:
-		print "It's equal, so 50/50 percentage"
+		print "I don't have enough information"
 
 
 def suits(local):
@@ -287,12 +289,13 @@ def q5():
 		if not list_rooms:
 			print 'I dont visited single rooms yet'
 		else:	
-
+			print list_rooms
+			print div_atual
 			for room in list_rooms:
+				print nx.shortest_path(grafo,div_atual,room,1,method='dijkstra')
 				peso = len(nx.shortest_path(grafo,div_atual,room,1,method='dijkstra'))
 				if peso < menor:
-					menor = peso
-					nearest_room = room
+				 nearest_room = room
 			if nearest_room == 0:
 				print 'Dont exist single rooms'
 			else:
@@ -301,12 +304,18 @@ def q5():
 def q7():
 	global init_time
 	global list_book
+	global spaces
 	time = rospy.get_rostime().secs - init_time
-
+	count = 0
+	# Vai iterar só nos quartos
+	for x in range(5, 15):
+		if len(spaces[str(x)]) != 0:
+			count += 1
+			 		
 	if len(list_book) == 0:
 		print 'I dont have enought information...'
 	else:
-		print "I estimate to find %.2f books in the next 2 minutes" %((120*len(list_book))/time)
+		print "I estimate to find %.2f books in the next 2 minutes" %((1-count/10)*(120*len(list_book))/time)
 
 def q8():
 	totalTables = number_table
@@ -330,7 +339,7 @@ def q8():
 	else:
 		propAsabendoB = (propA*((propB*propA)/propA))/propB
 
-	print 'The probability of finding a table in a room without books but that has at least one chair is: '  + str(propAsabendoB*100) + '%'
+	print 'The probability of finding a table in a room without books but that has at least 			one chair is: '  + str(propAsabendoB*100) + '%'
 					
 def q9():
 	global distancia_percorrida
@@ -430,7 +439,6 @@ def callback2(data):
 		q8()
 	if data.data is "9":
 		q9()
-
 # ---------------------------------------------------------------
 def agent():
 	global init_time
