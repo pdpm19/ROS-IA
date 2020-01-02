@@ -166,10 +166,8 @@ def suits(local):
 		suit = (div_ant,div_atual)
 		if len(list_suits) == 0:
 			list_suits.append(suit)
-			print list_suits
 		else:
 			for suits in list_suits:
-				print list_suits
 				if suit not in list_suits and (suit[0] != suits[0] or suit[0] != suits[1]) and suit[0] == suits[1]:
 					ver = False	
 				else:
@@ -229,7 +227,6 @@ def getTypeRoom(key):
 				table += 1
 			elif 'chair_' in item:
 				chair += 1
-				
 		
 		if beds > 1:
 			return 'double_room'
@@ -237,13 +234,13 @@ def getTypeRoom(key):
 			return 'single_room'
 		elif table > 1 and chair >= 1:
 			return 'meeting_room'
-		elif table > 1 and chair >= 1 and beds > 1:
-			return 'generic_room'
+			
 		else:
 			for tuples in list_suits:
 				if key in tuples:
-					return 'suit_room'				
-
+					return 'suit_room'
+					break;				
+			return 'generic_room'
 def q4():
 	global spaces
 	list_rooms = []
@@ -294,7 +291,6 @@ def q5():
 			print list_rooms
 			print div_atual
 			for room in list_rooms:
-				print nx.shortest_path(grafo,div_atual,room,1,method='dijkstra')
 				peso = len(nx.shortest_path(grafo,div_atual,room,1,method='dijkstra'))
 				if peso < menor:
 				 nearest_room = room
@@ -341,7 +337,7 @@ def q8():
 	else:
 		propAsabendoB = (propA*((propB*propA)/propA))/propB
 
-	print 'The probability of finding a table in a room without books but that has at least 			one chair is: '  + str(propAsabendoB*100) + '%'
+	print 'The probability of finding a table in a room without books but that has at least one chair is: '  + str(propAsabendoB*100) + '%'
 					
 def q9():
 	global distancia_percorrida
