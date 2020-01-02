@@ -12,7 +12,7 @@ Porque a _VM_ não dá jeito para para transferir entre 2 PC's o ficheiro agente
 - [x] Q3
 - [x] Q4
 - [x] Q5
-- [ ] Q6
+- [x] Q6
 - [x] Q7
 - [x] Q8
 - [x] Distância percorrida;

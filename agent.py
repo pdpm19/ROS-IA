@@ -106,8 +106,10 @@ def contents(objectD, space_number):
 			spaces[x].append(objectD)
 			attrs = {space_number:{'objects':spaces.get(str(space_number), 'none'),'type':getTypeRoom(space_number)}}
 			nx.set_node_attributes(grafo, attrs)
-			
-
+			if grafo.has_node(space_number):
+				print 'conteudo'
+				print grafo.nodes[space_number]['objects']
+				print grafo.nodes[space_number]['type']
 			
 
 # Responde à 1
@@ -146,8 +148,10 @@ def q3():
 		print "In Corridors with: %.2f percentage" %(float(corridors_persons)/total_persons*100)
 	elif rooms_persons > corridors_persons:
 		print "In Rooms with: %.2f percentage" %(float(rooms_persons)/total_persons*100)
+	elif rooms_persons == corridors_persons and rooms_persons != 0:
+		print "It's equal, 50/50 probability."
 	else:
-		print "It's equal, so 50/50 percentage"
+		print "I don't have enough information"
 
 
 def suits(local):
@@ -160,10 +164,8 @@ def suits(local):
 		suit = (div_ant,div_atual)
 		if len(list_suits) == 0:
 			list_suits.append(suit)
-			
 		else:
 			for suits in list_suits:
-				
 				if suit not in list_suits and (suit[0] != suits[0] or suit[0] != suits[1]) and suit[0] == suits[1]:
 					ver = False	
 				else:
@@ -223,7 +225,6 @@ def getTypeRoom(key):
 				table += 1
 			elif 'chair_' in item:
 				chair += 1
-				
 		
 		if beds > 1:
 			return 'double_room'
@@ -231,13 +232,13 @@ def getTypeRoom(key):
 			return 'single_room'
 		elif table > 1 and chair >= 1:
 			return 'meeting_room'
-		elif table > 1 and chair >= 1 and beds > 1:
-			return 'generic_room'
+			
 		else:
 			for tuples in list_suits:
 				if key in tuples:
-					return 'suit_room'				
-
+					return 'suit_room'
+					break;				
+			return 'generic_room'
 def q4():
 	global spaces
 	list_rooms = []
@@ -286,12 +287,12 @@ def q5():
 		if not list_rooms:
 			print 'I dont visited single rooms yet'
 		else:	
-
+			print list_rooms
+			print div_atual
 			for room in list_rooms:
 				peso = len(nx.shortest_path(grafo,div_atual,room,1,method='dijkstra'))
 				if peso < menor:
-					menor = peso
-					nearest_room = room
+				 nearest_room = room
 			if nearest_room == 0:
 				print 'Dont exist single rooms'
 			else:
@@ -300,12 +301,18 @@ def q5():
 def q7():
 	global init_time
 	global list_book
+	global spaces
 	time = rospy.get_rostime().secs - init_time
-
+	count = 0
+	# Vai iterar só nos quartos
+	for x in range(5, 15):
+		if len(spaces[str(x)]) != 0:
+			count += 1
+			 		
 	if len(list_book) == 0:
 		print 'I dont have enought information...'
 	else:
-		print "I estimate to find %.2f books in the next 2 minutes" %((120*len(list_book))/time)
+		print "I estimate to find %.2f books in the next 2 minutes" %((1-count/10)*(120*len(list_book))/time)
 
 def q8():
 	totalTables = number_table
@@ -429,7 +436,6 @@ def callback2(data):
 		q8()
 	if data.data is "9":
 		q9()
-
 # ---------------------------------------------------------------
 def agent():
 	global init_time
