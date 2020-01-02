@@ -163,7 +163,7 @@ def suits(local):
 			
 		else:
 			for suits in list_suits:
-				print list_suits
+				
 				if suit not in list_suits and (suit[0] != suits[0] or suit[0] != suits[1]) and suit[0] == suits[1]:
 					ver = False	
 				else:
